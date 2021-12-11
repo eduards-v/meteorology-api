@@ -1,7 +1,7 @@
 from flask import Flask, request
 from flask_restful import Resource, Api
 
-from service.sensors_service import SensorsService
+from services.sensors_service import SensorsService
 
 
 class Sensor(Resource):
@@ -20,7 +20,6 @@ class Sensor(Resource):
             return {"message": "The sensor with id %i not found" % sens_id}, 404
 
         json_data = request.get_json(force=True)
-        print(json_data)
         self.service.record_data(sens_id, **json_data)
 
         return {"message": "Recorded data for the sensor with id %i" % sens_id}, 201
