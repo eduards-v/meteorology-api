@@ -1,9 +1,12 @@
+from dbo.sensor_dbo import SensorModel
+
 SENSORS = {
-    1: {"data": [{"temp": 7.6, "hum": 22, "recorded": "2021-12-10 14:52:25.536249"},
-                 {"temp": 8.2, "hum": 21, "recorded": "2021-12-10 13:52:25.536249"}],
-        "metadata": {"country": "Ireland", "city": "Galway"}},
-    2: {"data": [],
-        "metadata": {"country": "Ireland", "city": "Dublin"}},
+    1: SensorModel(sens_id=1,
+                   metadata={"country": "Ireland", "city": "Galway"},
+                   data=[{"temp": 7.6, "hum": 22, "recorded": "2021-12-10 14:52:25.536249"},
+                       {"temp": 8.2, "hum": 21, "recorded": "2021-12-10 13:52:25.536249"}]),
+    2: SensorModel(sens_id=2,
+                   metadata={"country": "Ireland", "city": "Dublin"})
 }
 
 
@@ -12,20 +15,20 @@ class SensorsRepo(object):
         pass
 
     def fetch_all(self):
-        return SENSORS
+        return SENSORS.values()
 
     def fetch_by_id(self, sens_id):
         try:
             sensor = SENSORS[sens_id]
         except KeyError:
             return
-        return {"sensor %i" % sens_id: sensor}
+        return sensor
 
     def delete_by_id(self, sens_id):
         del SENSORS[sens_id]
 
-    def add_new(self, **kwargs):
-        SENSORS[kwargs["sens_id"]] = {"metadata": kwargs["metadata"], "data": []}
+    def add_new(self, sensor_dbo):
+        SENSORS[sensor_dbo.sens_id] = sensor_dbo
 
-    def record_sensor_data(self, sens_id, **kwargs):
-        SENSORS[sens_id]["data"].append(kwargs["data"])
+    def record_sensor_data(self, sensor):
+        SENSORS[sensor.sens_id].data.append(sensor.data[0])

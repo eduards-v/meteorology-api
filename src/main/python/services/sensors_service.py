@@ -9,17 +9,14 @@ class SensorsService(object):
         return self.repo.fetch_all()
 
     def get_by_id(self, sens_id):
-        return self.repo.fetch_by_id(sens_id)
+        sensor = self.repo.fetch_by_id(sens_id)
+        return sensor
 
-    def add_new(self, **kwargs):
-        print("Sensors Service: %s" % kwargs)
-        # create dbo here from kwargs
-        self.repo.add_new(**kwargs)
+    def add_new(self, sensor):
+        self.repo.add_new(sensor)
 
     def delete_by_id(self, sens_id):
         return self.repo.delete_by_id(sens_id)
 
-    def record_data(self, sens_id, **kwargs):
-        print("Sensors Service: sens_id: %i data: %s" % (sens_id, kwargs))
-        # create dbo here from kwargs
-        self.repo.record_sensor_data(sens_id, **kwargs)
+    def record_data(self, sensor):
+        self.repo.record_sensor_data(sensor)
