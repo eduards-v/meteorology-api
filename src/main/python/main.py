@@ -1,30 +1,54 @@
-from flask import Flask
+from flask import Flask, request
 from flask_restful import Resource, Api
+
+from service.sensors_service import SensorsService
 
 
 class Sensor(Resource):
     def __init__(self):
-        self.service = None
+        self.service = SensorsService()
 
     def get(self, sens_id):
-        pass
+        sensor = self.service.get_by_id(sens_id)
+        if not sensor:
+            return {"message": "The sensor with id %i not found" % sens_id}, 404
+        return self.service.get_by_id(sens_id)
 
     def put(self, sens_id):
-        pass
+        sensor = self.service.get_by_id(sens_id)
+        if not sensor:
+            return {"message": "The sensor with id %i not found" % sens_id}, 404
+
+        json_data = request.get_json(force=True)
+        print(json_data)
+        self.service.record_data(sens_id, **json_data)
+
+        return {"message": "Recorded data for the sensor with id %i" % sens_id}, 201
 
     def delete(self, sens_id):
-        pass
+        sensor = self.service.get_by_id(sens_id)
+        if not sensor:
+            return {"message": "The sensor with id %i not found" % sens_id}, 404
+
+        self.service.delete_by_id(sens_id)
+        return {"message": "Deleted the sensor with id %i" % sens_id}, 204
 
 
 class Sensors(Resource):
     def __init__(self):
-        pass
+        self.service = SensorsService()
 
     def get(self):
-        pass
+        return self.service.get_all()
 
     def post(self):
-        pass
+        new_sens = request.get_json(force=True)
+
+        if self.service.get_by_id(new_sens["sens_id"]):
+            return {"message": "The sensor with id %i already exists" % new_sens["sens_id"]}, 403
+
+        self.service.add_new(**new_sens)
+        return {'message': 'Added the new sensor with id %i' % new_sens["sens_id"]}, 201
 
 
 class MeteoApi(Resource):
