@@ -22,6 +22,13 @@ CREATE TABLE countries (
    country_name text NOT NULL UNIQUE
 );
 
+ALTER TABLE countries OWNER TO meteodba;
+
+INSERT INTO countries (country_name) VALUES ('Ireland');
+INSERT INTO countries (country_name) VALUES ('England');
+INSERT INTO countries (country_name) VALUES ('Germany');
+INSERT INTO countries (country_name) VALUES ('France');
+
 
 -- CITIES
 
@@ -36,6 +43,25 @@ ALTER TABLE cities
 
 CREATE INDEX ctr_id_idx ON cities (ctr_id);
 
+ALTER TABLE cities OWNER TO meteodba;
+
+INSERT INTO cities (ctr_id, city_name) VALUES ((select ctr_id from countries where country_name='Ireland'), 'Galway');
+INSERT INTO cities (ctr_id, city_name) VALUES ((select ctr_id from countries where country_name='Ireland'), 'Dublin');
+INSERT INTO cities (ctr_id, city_name) VALUES ((select ctr_id from countries where country_name='Ireland'), 'Cork');
+INSERT INTO cities (ctr_id, city_name) VALUES ((select ctr_id from countries where country_name='Ireland'), 'Athlone');
+
+INSERT INTO cities (ctr_id, city_name) VALUES ((select ctr_id from countries where country_name='England'), 'London');
+INSERT INTO cities (ctr_id, city_name) VALUES ((select ctr_id from countries where country_name='England'), 'Manchester');
+INSERT INTO cities (ctr_id, city_name) VALUES ((select ctr_id from countries where country_name='England'), 'Leeds');
+
+INSERT INTO cities (ctr_id, city_name) VALUES ((select ctr_id from countries where country_name='Germany'), 'Berlin');
+INSERT INTO cities (ctr_id, city_name) VALUES ((select ctr_id from countries where country_name='Germany'), 'Munich');
+INSERT INTO cities (ctr_id, city_name) VALUES ((select ctr_id from countries where country_name='Germany'), 'Hamburg');
+
+INSERT INTO cities (ctr_id, city_name) VALUES ((select ctr_id from countries where country_name='France'), 'Paris');
+INSERT INTO cities (ctr_id, city_name) VALUES ((select ctr_id from countries where country_name='France'), 'Marseille');
+INSERT INTO cities (ctr_id, city_name) VALUES ((select ctr_id from countries where country_name='France'), 'Arles');
+
 
 -- SENSORS
 
@@ -49,6 +75,7 @@ ALTER TABLE sensors
 
 CREATE INDEX cit_id_idx ON sensors (cit_id);
 
+ALTER TABLE sensors OWNER TO meteodba;
 
 -- SENSORS DATA
 
@@ -65,3 +92,4 @@ ALTER TABLE sensors_data
 
 CREATE INDEX sens_id_idx ON sensors_data (sens_id);
 
+ALTER TABLE sensors_data OWNER TO meteodba;

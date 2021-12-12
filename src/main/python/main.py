@@ -1,7 +1,7 @@
 from flask import Flask, request
 from flask_restful import Resource, Api
 
-from dbo.sensor_dbo import SensorModelSchema
+from models.sensor_model import SensorModelSchema
 from services.sensors_service import SensorsService
 
 

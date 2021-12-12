@@ -1,4 +1,4 @@
-from dbo.sensor_dbo import SensorModel
+from models.sensor_model import SensorModel
 
 SENSORS = {
     1: SensorModel(sens_id=1,
