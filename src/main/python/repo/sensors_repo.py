@@ -57,7 +57,7 @@ class SensorsRepo(object):
                                  record["recorded"]))
 
     def get_latest_data(self, sens_id):
-        query = "select sensors.sens_id, temperature, humidity from sensors " \
+        query = "select sensors.sens_id, temperature, humidity, recorded from sensors " \
                 "LEFT JOIN sensors_data ON sensors.sens_id = sensors_data.sens_id " \
                 "WHERE sensors.sens_id = %s ORDER BY recorded DESC LIMIT 1;"
         with PostgresConnection(database=self._database) as conn:
@@ -65,7 +65,7 @@ class SensorsRepo(object):
         if not latest_data:
             return
 
-        latest_data = nest_flat_dict(dict(latest_data), "data", "temperature", "humidity")
+        latest_data = nest_flat_dict(dict(latest_data), "data", "temperature", "humidity", "recorded")
 
         # wrap data into the list as expected by the model. Need to find a better approach to the problem.
         latest_data["data"] = [latest_data["data"].copy()]

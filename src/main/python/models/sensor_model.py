@@ -1,17 +1,12 @@
 from marshmallow import Schema, fields, post_load, pre_dump
 import simplejson as json
 
-
-# class SensorDataSchema(Schema):
-#     temperature = fields.Decimal()
-#     humidity = fields.Int()
-#     recorded = fields.DateTime()
+from utils.json_encoders import DateEncoder
 
 
 class SensorModelSchema(Schema):
     sens_id = fields.Int(required=True)
     metadata = fields.Dict()
-    # data = fields.List(fields.Nested(SensorDataSchema()))
     data = fields.List(fields.Dict())
 
     uri = fields.Url()
@@ -24,8 +19,8 @@ class SensorModelSchema(Schema):
     def serialize_data(self, model, **kwargs):
         # marshmallow can't serialize Decimal object. Using simplejson instead.
         if model.data:
-            serialized_date = json.dumps(model.data)
-            model.data = eval(serialized_date)
+            serialized_data = json.dumps(model.data, cls=DateEncoder)
+            model.data = eval(serialized_data)
         return model
 
 
