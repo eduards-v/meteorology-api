@@ -1,14 +1,32 @@
-from marshmallow import Schema, fields, post_load
+from marshmallow import Schema, fields, post_load, pre_dump
+import simplejson as json
+
+
+# class SensorDataSchema(Schema):
+#     temperature = fields.Decimal()
+#     humidity = fields.Int()
+#     recorded = fields.DateTime()
 
 
 class SensorModelSchema(Schema):
     sens_id = fields.Int(required=True)
     metadata = fields.Dict()
+    # data = fields.List(fields.Nested(SensorDataSchema()))
     data = fields.List(fields.Dict())
 
+    uri = fields.Url()
+
     @post_load
-    def create_sensor(self, data, **kwargs):
-        return SensorModel(**data)
+    def create_sensor(self, model_params, **kwargs):
+        return SensorModel(**model_params)
+
+    @pre_dump
+    def serialize_data(self, model, **kwargs):
+        # marshmallow can't serialize Decimal object. Using simplejson instead.
+        if model.data:
+            serialized_date = json.dumps(model.data)
+            model.data = eval(serialized_date)
+        return model
 
 
 class SensorModel(object):
@@ -29,38 +47,10 @@ class SensorModel(object):
     def data(self):
         return self._data
 
+    @data.setter
+    def data(self, data):
+        self._data = data
+
     def __str__(self):
         return "Sensor: {id}; Metadata: {meta};".format(id=self.sens_id,
                                                         meta=self.metadata)
-
-
-if __name__ == '__main__':
-    dbo1 = SensorModel(1, {"country": "Ireland", "city": "Galway"},
-                       data=[
-                           {"temp": 7.6, "hum": 22, "recorded": "2021-12-10 14:52:25.536249"},
-                           {"temp": 8.2, "hum": 21, "recorded": "2021-12-10 13:52:25.536249"}
-                       ])
-
-    post = {
-        "sens_id": 3,
-        "metadata":
-            {
-                "country": "Germany",
-                "city": "Berlin"
-            }
-    }
-
-    put = {
-        "sens_id": 1,
-        "data": [{
-            "temp": 14,
-            "hum": 14,
-            "recorded": "2021-12-11 16:52:25.536249"
-        }]
-    }
-    res = SensorModelSchema().dump(dbo1)
-    res2 = SensorModelSchema().load(post)
-    res3 = SensorModelSchema().load(put)
-    print(res)
-    print(repr(res2))
-    print(res3.data)

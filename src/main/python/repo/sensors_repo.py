@@ -1,4 +1,4 @@
-from models.sensor_model import SensorModel, SensorModelSchema
+from models.sensor_model import SensorModelSchema
 from repo.connectors.psql.driver import PostgresConnection
 from utils.dict_utils import nest_flat_dict
 
@@ -55,3 +55,18 @@ class SensorsRepo(object):
                                  record["temperature"],
                                  record["humidity"],
                                  record["recorded"]))
+
+    def get_latest_data(self, sens_id):
+        query = "select sensors.sens_id, temperature, humidity from sensors " \
+                "LEFT JOIN sensors_data ON sensors.sens_id = sensors_data.sens_id " \
+                "WHERE sensors.sens_id = %s ORDER BY recorded DESC LIMIT 1;"
+        with PostgresConnection(database=self._database) as conn:
+            latest_data = conn.fetchone(query, (sens_id, ))
+        if not latest_data:
+            return
+
+        latest_data = nest_flat_dict(dict(latest_data), "data", "temperature", "humidity")
+
+        # wrap data into the list as expected by the model. Need to find a better approach to the problem.
+        latest_data["data"] = [latest_data["data"].copy()]
+        return SensorModelSchema().load(latest_data)

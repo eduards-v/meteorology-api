@@ -5,6 +5,19 @@ from models.sensor_model import SensorModelSchema
 from services.sensors_service import SensorsService
 
 
+class SensorData(Resource):
+    def __init__(self):
+        self.service = SensorsService()
+
+    def get(self, sens_id):
+        sensor = self.service.get_by_id(sens_id)
+        if not sensor:
+            return {"message": "The sensor with id %i not found" % sens_id}, 404
+
+        sensor_data = self.service.get_latest_data(sens_id)
+        return SensorModelSchema(exclude=["metadata"]).dump(sensor_data)
+
+
 class Sensor(Resource):
     def __init__(self):
         self.service = SensorsService()
@@ -13,9 +26,8 @@ class Sensor(Resource):
         sensor = self.service.get_by_id(sens_id)
         if not sensor:
             return {"message": "The sensor with id %i not found" % sens_id}, 404
-        print(sensor.data)
-        print(sensor)
-        return SensorModelSchema().dump(sensor)
+
+        return SensorModelSchema(exclude=["data"]).dump(sensor)
 
     def put(self, sens_id):
         sensor = self.service.get_by_id(sens_id)
@@ -44,7 +56,7 @@ class Sensors(Resource):
 
     def get(self):
         sensors = self.service.get_all()
-        return SensorModelSchema(many=True).dump(sensors)
+        return SensorModelSchema(exclude=["data"], many=True).dump(sensors)
 
     def post(self):
         json_data = request.get_json(force=True)
@@ -70,6 +82,7 @@ def main():
     api.add_resource(MeteoApi, '/')
     api.add_resource(Sensors, '/sensors/')
     api.add_resource(Sensor, '/sensors/<int:sens_id>/')
+    api.add_resource(SensorData, '/sensors/<int:sens_id>/data/')
     app.run(debug=True)
 
 

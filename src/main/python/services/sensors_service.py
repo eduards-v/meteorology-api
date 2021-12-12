@@ -20,3 +20,6 @@ class SensorsService(object):
 
     def record_data(self, sensor):
         self.repo.record_sensor_data(sensor)
+
+    def get_latest_data(self, sens_id):
+        return self.repo.get_latest_data(sens_id)
