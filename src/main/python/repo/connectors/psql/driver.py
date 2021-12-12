@@ -1,6 +1,8 @@
 import psycopg2
 from psycopg2.extras import DictCursor
 
+from utils.dict_utils import nest_flat_dict
+
 
 class PostgresDriver(object):
     def __init__(self, database, connection):
@@ -77,40 +79,3 @@ class PostgresConnection(object):
         else:
             self._connection.commit()
         self._connection.close()
-
-
-if __name__ == '__main__':
-    with PostgresConnection(database="meteodb") as conn:
-        res = conn.fetchall("SELECT * FROM countries;")
-
-    print(res)
-    for r in res:
-        print(dict(r))
-        print(r["country_name"])
-
-    with PostgresConnection(database="meteodb") as conn:
-        res = conn.fetchall("SELECT * FROM cities;")
-
-    print(res)
-    for r in res:
-        print(dict(r))
-        print(r["city_name"])
-
-    cq = "select city_name, country_name from cities LEFT JOIN countries ON cities.ctr_id = countries.ctr_id;"
-    with PostgresConnection(database="meteodb") as conn:
-        res = conn.fetchall(cq)
-
-    print(res)
-    for r in res:
-        print(dict(r))
-        print(r["city_name"])
-
-    cq = "select city_name, country_name from cities " \
-         "LEFT JOIN countries ON cities.ctr_id = countries.ctr_id " \
-         "WHERE country_name in (%s, %s);"
-
-    with PostgresConnection(database="meteodb") as conn:
-        res = conn.fetchall(cq, ("Ireland", "England"))
-
-    for r in res:
-        print(dict(r))

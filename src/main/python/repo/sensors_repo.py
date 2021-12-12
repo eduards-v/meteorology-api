@@ -1,34 +1,57 @@
-from models.sensor_model import SensorModel
-
-SENSORS = {
-    1: SensorModel(sens_id=1,
-                   metadata={"country": "Ireland", "city": "Galway"},
-                   data=[{"temp": 7.6, "hum": 22, "recorded": "2021-12-10 14:52:25.536249"},
-                       {"temp": 8.2, "hum": 21, "recorded": "2021-12-10 13:52:25.536249"}]),
-    2: SensorModel(sens_id=2,
-                   metadata={"country": "Ireland", "city": "Dublin"})
-}
+from models.sensor_model import SensorModel, SensorModelSchema
+from repo.connectors.psql.driver import PostgresConnection
+from utils.dict_utils import nest_flat_dict
 
 
 class SensorsRepo(object):
     def __init__(self):
-        pass
+        self._database = "meteodb"
 
     def fetch_all(self):
-        return SENSORS.values()
+        query = "select sens_id, city_name, country_name from sensors " \
+                "LEFT JOIN cities ON sensors.cit_id = cities.cit_id " \
+                "LEFT JOIN countries ON cities.ctr_id = countries.ctr_id;"
+        with PostgresConnection(database=self._database) as conn:
+            sensors = conn.fetchall(query)
+        if not sensors:
+            return
+
+        # driver returns list of DictRow objects
+        # convert into the model object
+        sensors = [nest_flat_dict(dict(sensor), "metadata", "city_name", "country_name") for sensor in sensors]
+        return SensorModelSchema(many=True).load(sensors)
 
     def fetch_by_id(self, sens_id):
-        try:
-            sensor = SENSORS[sens_id]
-        except KeyError:
+        query = "select sens_id, city_name, country_name from sensors " \
+                "LEFT JOIN cities ON sensors.cit_id = cities.cit_id " \
+                "LEFT JOIN countries ON cities.ctr_id = countries.ctr_id WHERE sens_id = %s;"
+        with PostgresConnection(database=self._database) as conn:
+            sensor = conn.fetchone(query, (sens_id,))
+        if not sensor:
             return
-        return sensor
+
+        # driver returns DictRow object
+        # convert into the model object
+        sensor = nest_flat_dict(dict(sensor), "metadata", "city_name", "country_name")
+        return SensorModelSchema().load(sensor)
 
     def delete_by_id(self, sens_id):
-        del SENSORS[sens_id]
+        query = "DELETE from sensors WHERE sens_id = %s;"
+        with PostgresConnection(database=self._database) as conn:
+            conn.run(query, (sens_id, ))
 
-    def add_new(self, sensor_dbo):
-        SENSORS[sensor_dbo.sens_id] = sensor_dbo
+    def add_new(self, sensor_model):
+        query = "INSERT INTO sensors (sens_id, cit_id) " \
+                "VALUES (%s, (select cit_id from cities where city_name = %s));"
+        with PostgresConnection(database=self._database) as conn:
+            conn.run(query, (sensor_model.sens_id, sensor_model.metadata["city_name"]))
 
-    def record_sensor_data(self, sensor):
-        SENSORS[sensor.sens_id].data.append(sensor.data[0])
+    def record_sensor_data(self, sensor_model):
+        query = "INSERT INTO sensors_data (sens_id, temperature, humidity, recorded) " \
+                "VALUES (%s, %s, %s, %s);"
+        with PostgresConnection(database=self._database) as conn:
+            for record in sensor_model.data:
+                conn.run(query, (sensor_model.sens_id,
+                                 record["temperature"],
+                                 record["humidity"],
+                                 record["recorded"]))
