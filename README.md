@@ -85,7 +85,7 @@ python src\main\python\main.py
 
 Available paths and methods
 
-###Get All sensors
+### Get All sensors
 
 **Request**
 
@@ -128,7 +128,8 @@ server: Werkzeug/2.0.2 Python/3.9.7
 ]
 ```
 
-###Subscribe a new sensor
+### Subscribe a new sensor
+
 
 **Request**
 ```
@@ -155,7 +156,8 @@ server: Werkzeug/2.0.2 Python/3.9.7
 }
 ```
 
-###Find a sensor by ID
+### Find a sensor by ID
+
 **Request**
 ```
 GET /sensors/{id}/
@@ -180,7 +182,8 @@ server: Werkzeug/2.0.2 Python/3.9.7
 }
 ```
 
-###Get sensor's latest record
+### Get sensor's latest record
+
 **Request**
 ```
 GET /sensors/{id}/data/
@@ -209,7 +212,8 @@ server: Werkzeug/2.0.2 Python/3.9.7
 }
 ```
 
-###Send sensor's latest records
+### Send sensor's latest records
+
 **Request**
 ```
 PUT /sensors/{id}/
@@ -233,7 +237,8 @@ server: Werkzeug/2.0.2 Python/3.9.7
 }
 ```
 
-###Delete sensor by ID
+### Delete sensor by ID
+
 **Request**
 ```
 DELETE /sensors/{id}/
