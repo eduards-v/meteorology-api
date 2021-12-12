@@ -67,7 +67,7 @@ class Sensors(Resource):
         sensor = SensorModelSchema().load(json_data)
         self.service.add_new(sensor)
 
-        return SensorModelSchema().dump(sensor), 201
+        return SensorModelSchema(exclude=["data"]).dump(sensor), 201
 
 
 class MeteoApi(Resource):
