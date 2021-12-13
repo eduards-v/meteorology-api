@@ -292,5 +292,29 @@ I had to take it further with the datetime object and implement a custom encoder
 https://github.com/eduards-v/meteorology-api/blob/main/src/main/python/utils/json_encoders.py#L5
 
 
+</details>
+
+<details>
+<summary>Desired improvements and features</summary>
+
+</br>
+
+#### Code improvements
+
+1. **Add unit tests**
+2. Exceptions handling, primerly from the database driver.
+3. Improve REST endpoints robustness. Drills down to exceptions handling.
+4. Partially move implementation from SensorsRepo class to SesnsorsService, specifically:
+    * SensorModel object instanciation
+    * Driver's results mutation, i.g., https://github.com/eduards-v/meteorology-api/blob/main/src/main/python/repo/sensors_repo.py#L21
+    * Driver can return simple dict structure that can be handled in service
+    * Methods input parameters can also accept a dict structure
+    * Repo can be decoupled from Model's implementation details
+    * These changes will make SensorsRepo class more tolerant to changes in the SensorModel structure
+5. Move API resources from the main.py to a separate package called _resources_
+6. DateEncoder should be renamed to DatetimeEncode. Can also handle date object in the same implementation.
+7. Add doc strings to the methods, explaining what each method does
+8. Probably much more I can't think of now
+
 
 </details>
