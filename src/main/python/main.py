@@ -15,6 +15,7 @@ class SensorData(Resource):
             return {"message": "The sensor with id %i not found" % sens_id}, 404
 
         sensor_data = self.service.get_latest_data(sens_id)
+
         return SensorModelSchema(exclude=["metadata"]).dump(sensor_data)
 
 
@@ -56,6 +57,8 @@ class Sensors(Resource):
 
     def get(self):
         sensors = self.service.get_all()
+        if not sensors:
+            return {"message": "No sensors registered with the service "}, 404
         return SensorModelSchema(exclude=["data"], many=True).dump(sensors)
 
     def post(self):

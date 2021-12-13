@@ -15,10 +15,3 @@ def nest_flat_dict(original, sub_dict_name, *args):
         sub_dict[arg] = mutated_dict.pop(arg)
     mutated_dict[sub_dict_name] = sub_dict
     return mutated_dict
-
-
-if __name__ == '__main__':
-    org = {'sens_id': 1, 'city_name': 'Galway', 'country_name': 'Ireland'}
-    mdict = nest_flat_dict(org, "metadata", "country_name", "city_name")
-    print(org)
-    print(mdict)
