@@ -258,7 +258,7 @@ server: Werkzeug/2.0.2 Python/3.9.7
 <details>
 <summary>Challanges faced during development</summary>
 
-</br>
+<br>
 
 #### Architectural Challanges
 
@@ -273,13 +273,13 @@ I went ahead with the Flask Restful framework because:
 * Django is monolithic; Flask is diversified. For RestFul micro-services, we don't do monoliths.
 * As for ORM, both Django and Flask provide excellent support for it. Django has built-in ORM, providing native support; Flask uses SQLAlchemy. I decided not to use SQLAlchemy and designed ORM with PostgreSQL and psycopg2 driver.
 
-</br>
+<br>
 
 The second challenge I faced was to pivot away from Flask's native marshaling feature.</br>
 I found it quite ugly and hard to understand. On top of that, Flask developers stopped developing that feature and recommended using something better.</br>
 That is where the Marshmallow came in handy. It is not only easy to use and grasp, but it also does a great job in encapsulation my model object.
 
-</br>
+<br>
 
 #### Implementation Challanges
 
@@ -296,7 +296,7 @@ https://github.com/eduards-v/meteorology-api/blob/main/src/main/python/utils/jso
 <details>
 <summary>Desired improvements and features</summary>
 
-</br>
+<br>
 
 #### Code improvements
 

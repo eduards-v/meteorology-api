@@ -1,8 +1,6 @@
 import psycopg2
 from psycopg2.extras import DictCursor
 
-from utils.dict_utils import nest_flat_dict
-
 
 class PostgresDriver(object):
     def __init__(self, database, connection):
@@ -79,13 +77,3 @@ class PostgresConnection(object):
         else:
             self._connection.commit()
         self._connection.close()
-
-
-if __name__ == '__main__':
-    qry = "select sensors.sens_id, temperature, humidity, recorded from sensors " \
-                    "LEFT JOIN sensors_data ON sensors.sens_id = sensors_data.sens_id " \
-                    "WHERE sensors.sens_id = %s ORDER BY recorded DESC;"
-    with PostgresConnection(database="meteodb") as conn:
-        latest_data = conn.fetchall(qry, (2, ))
-
-    print(latest_data)
