@@ -1,6 +1,5 @@
 # Meteorology API
 ## API to subscribe and persist meteorological sensors and the data
-Brief description of the API here...
 
 ## Prerequisites to start API server
 
@@ -314,7 +313,42 @@ https://github.com/eduards-v/meteorology-api/blob/main/src/main/python/utils/jso
 5. Move API resources from the main.py to a separate package called _resources_
 6. DateEncoder should be renamed to DatetimeEncode. Can also handle date object in the same implementation.
 7. Add doc strings to the methods, explaining what each method does
-8. Probably much more I can't think of now
+8. Fix a bug in DELETE sensor endpoint; does not return response body
+9. Probably much more I can't think of now
 
+
+#### Features to add
+
+1. Add sensor URL to the response body when creating a new sensor
+```
+{
+    "metadata": {
+        "country_name": "Germany",
+        "city_name": "Berlin"
+    },
+    "sens_id": 777,
+    "url": http://localhost:5000/sensors/777/
+}
+```
+2. Add sensors URLs to the response body when quering for all sensors
+3. Add sensor's data URL to the response body when quering specific sensor
+```
+{
+    "metadata": {
+        "city_name": "Galway",
+        "country_name": "Ireland"
+    },
+    "sens_id": 1,
+    "data_url": http://localhost:5000/sensors/1/data
+}
+```
+5. Allow to query sensor's data by date and calculate avarage metrics </br>
+Pseudo URL: `http://localhost:5000/sensors/777/data?date=<date>`
+4. Allow to query sensor's data by the date range and calculate avarage metrics </br>
+Pseudo URL: `http://localhost:5000/sensors/777/data?from=<date>&to=<date>`
+5. Query all sensors for the specified city </br>
+Pseudo URL: `http://localhost:5000/city/<city_name>/sensors/`
+6. Query all sensors for the specified country </br>
+Pseudo URL: `http://localhost:5000/country/<country_name>/sensors/`
 
 </details>
