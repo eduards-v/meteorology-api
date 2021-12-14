@@ -43,8 +43,8 @@ class SensorModel(object):
         return self._data
 
     @data.setter
-    def data(self, data):
-        self._data = data
+    def data(self, set_data):
+        self._data = set_data
 
     def __str__(self):
         return "Sensor: {id}; Metadata: {meta};".format(id=self.sens_id,
