@@ -1,7 +1,7 @@
 from marshmallow import Schema, fields, post_load, pre_dump
 import simplejson as json
 
-from utils.json_encoders import DateEncoder
+from utils.json_encoders import DatetimeEncoder
 
 
 class SensorModelSchema(Schema):
@@ -19,7 +19,7 @@ class SensorModelSchema(Schema):
     def serialize_data(self, model, **kwargs):
         # marshmallow can't serialize Decimal object. Using simplejson instead.
         if model.data:
-            serialized_data = json.dumps(model.data, cls=DateEncoder)
+            serialized_data = json.dumps(model.data, cls=DatetimeEncoder)
             model.data = eval(serialized_data)
         return model
 
